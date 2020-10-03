@@ -33,7 +33,7 @@ fn binserve_init() {
     render_templates();
 }
 
-#[actix_rt::main]
+#[actix_web::main]
 async fn main() -> std::io::Result<()> {
     // init binserve server config & files
     binserve_init();
