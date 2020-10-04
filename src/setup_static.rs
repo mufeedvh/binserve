@@ -34,7 +34,7 @@ pub fn setup_static() -> std::io::Result<()> {
         // create `index.html` homepage inside static directory
         if !Path::new(&index_html_path).exists() {
             let mut index_html = fs::File::create(index_html_path)?;
-        index_html.write_all(index_contents.as_bytes())?;
+            index_html.write_all(index_contents.as_bytes())?;
         }
     }
 
