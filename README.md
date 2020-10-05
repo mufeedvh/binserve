@@ -148,7 +148,7 @@ To load static files such as `images`, `css`, and `javascript`, just use `{{load
 
     $ git clone https://github.com/mufeedvh/binserve.git
     $ cd binserve/
-    $ cargo build
+    $ cargo build --release
 
 ## Security
 
