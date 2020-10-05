@@ -13,15 +13,15 @@ pub fn setup_static() -> std::io::Result<()> {
     let config = get_config();
 
     // default `index.html` template
-    let index_contents = b"<html>\
-    <title>{{name}}</title>\
-    <body>\
-    <h1>Hello, universe!</h1>\
-    <h2>{{name}} is up and running!</h2>\
-    <hr>\
-    <p><i>binserve v0.1.0</i></p>\
-    </body>\
-    </html>";
+    const index_contents: &str = "<html>
+    <title>{{name}}</title>
+    <body>
+        <h1>Hello, universe!</h1>
+        <h2>{{name}} is up and running!</h2>
+        <hr>
+        <p><i>binserve v0.1.0</i></p>
+    </body>
+</html>";
 
     // create binserve static directories and files
     let static_dir = config["static_directory"].to_string().replace("\"", "");
@@ -34,7 +34,7 @@ pub fn setup_static() -> std::io::Result<()> {
         // create `index.html` homepage inside static directory
         if !Path::new(&index_html_path).exists() {
             let mut index_html = fs::File::create(index_html_path)?;
-            index_html.write_all(index_contents)?;
+            index_html.write_all(index_contents.as_bytes())?;
         }
     }
 
