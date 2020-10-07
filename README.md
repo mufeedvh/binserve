@@ -146,9 +146,18 @@ To load static files such as `images`, `css`, and `javascript`, just use `{{load
 
 ## Build From Source
 
+For building binserve from source, you need to have these tools installed
+
+* [Git](https://git-scm.org/downloads)
+* [Rust](https://rust-lang.org/tools/install)
+* Cargo (Automatically installed when installibg Rust)
+* A C linker (Only for Linux, generally comes pre-installed)
+
     $ git clone https://github.com/mufeedvh/binserve.git
     $ cd binserve/
     $ cargo build --release
+
+The first command clones the binserve repository in your local machine. The next two commands changes into the binserve directory and builds it with it in release mode
 
 ## Security
 
