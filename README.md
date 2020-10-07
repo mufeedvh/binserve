@@ -159,7 +159,7 @@ $ cd binserve/
 $ cargo build --release
 ```
 
-The first command clones the binserve repository in your local machine. The next two commands changes into the binserve directory and builds it with it in release mode
+The first command clones the binserve repository in your local machine. The next two commands changes into the binserve directory and builds it in release mode
 
 ## Security
 
