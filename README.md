@@ -8,6 +8,20 @@ A blazingly fast static web server in a single binary you can set up with zero c
     <a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20A%20blazingly%20fast%20static%20web%20server%20in%20a%20single%20binary%20you%20can%20set%20up%20with%20zero%20code.:&url=https%3A%2F%2Fgithub.com%2Fmufeedvh%2Fbinserve"><img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/mufeedvh/basecrack.svg?style=social"></a>
 </p>
 
+## Table of Contents
+
+* [Features](#features)
+* [Quick Start](#hello-world)
+* [Configuration](#%EF%B8%8F-configuration-file)
+* [Templates](#-templates)
+* [Build From Source](#build-from-source)
+* [Security](#security)
+* [Contribution](#contribution)
+* [License](#license)
+* [Support The Author](#liked-the-project)
+
+----
+
 ## Features
 
 - **Single binary with no dependencies and everything built-in.**
@@ -188,8 +202,8 @@ Support the author by buying him a coffee!
 
 <a href="https://www.buymeacoffee.com/mufeedvh" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-orange.png" alt="Buy Me A Coffee" height="51px" width="217px"></a>
 
-------------
+----
 
 ***Support this project by starring ⭐, sharing 📲, and contributing 👩‍💻! :heart:***
 
-------------
+----
