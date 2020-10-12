@@ -1,6 +1,6 @@
 # `binserve` :zap::crab:
 
-A blazingly fast static web server in a single binary you can set up with zero code. :fire:
+A blazingly fast static web server with **routing**, **templating**, and **security** in a single binary you can set up with zero code. :fire:
 
 <p align="left">
     <img src="https://img.shields.io/badge/version-0.1.0-blue.svg" title="version" alt="version">
