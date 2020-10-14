@@ -34,6 +34,7 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
     };
 
     Ok(NamedFile::open(response_file)?
-        .use_last_modified(true)
-        .set_status_code(status_code))
+        .set_status_code(status_code)
+        .prefer_utf8(true)
+        .use_last_modified(true))
 }

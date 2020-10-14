@@ -77,7 +77,8 @@ async fn main() -> std::io::Result<()> {
                 .service(
                     Files::new("/static", "static/assets/")
                         .show_files_listing()
-                        .use_last_modified(true),
+                        .prefer_utf8(true)
+                        .use_last_modified(true)
                 )
                 // serve static files
                 .route("/{route:.*}", web::get().to(serve_content))
@@ -85,7 +86,11 @@ async fn main() -> std::io::Result<()> {
             App::new()
                 // enable the logger middlware
                 .wrap(middleware::Logger::default())
-                .service(Files::new("/static", "static/assets/").use_last_modified(true))
+                .service(
+                    Files::new("/static", "static/assets/")
+                        .prefer_utf8(true)
+                        .use_last_modified(true)
+                )
                 // serve static files
                 .route("/{route:.*}", web::get().to(serve_content))
         }
