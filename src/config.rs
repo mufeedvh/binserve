@@ -8,8 +8,7 @@ use std::io::prelude::*;
 use std::io::{BufReader, Write};
 use std::path::Path;
 
-use serde_json::Value;
-use serde_json::from_str;
+use serde_json::{Value, from_str};
 
 // config filename
 static CONFIG_FILE: &str = "binserve.json";

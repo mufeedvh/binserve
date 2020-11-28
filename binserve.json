@@ -1,6 +1,6 @@
 {
   "directory_listing": false,
-  "enable_logging": false,
+  "enable_logging": true,
   "error_pages": {
     "404": "404.html"
   },
@@ -15,7 +15,6 @@
   },
   "static_directory": "static",
   "template_variables": {
-    "load_static": "/static/",
-    "name": "This is test 😋"
+    "load_static": "/static/"
   }
 }
