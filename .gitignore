@@ -15,5 +15,5 @@ Cargo.lock
 /target
 
 /rendered_templates
-
+binserve.json
 release.py
