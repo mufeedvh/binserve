@@ -1,6 +1,6 @@
 {
   "directory_listing": false,
-  "enable_logging": true,
+  "enable_logging": false,
   "error_pages": {
     "404": "404.html"
   },
@@ -16,6 +16,6 @@
   "static_directory": "static",
   "template_variables": {
     "load_static": "/static/",
-    "name": "Binserve"
+    "name": "This is test 😋"
   }
 }

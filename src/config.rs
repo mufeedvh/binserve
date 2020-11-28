@@ -8,8 +8,15 @@ use std::io::prelude::*;
 use std::io::{BufReader, Write};
 use std::path::Path;
 
+use serde_json::Value;
+use serde_json::from_str;
+
 // config filename
 static CONFIG_FILE: &str = "binserve.json";
+
+/*
+    TODO: Store config in cache
+*/
 
 // save the config to an environment variable
 fn save_config() -> std::io::Result<()> {
@@ -17,6 +24,12 @@ fn save_config() -> std::io::Result<()> {
     let mut buf_reader = BufReader::new(config_file);
     let mut json_string = String::new();
     buf_reader.read_to_string(&mut json_string)?;
+    
+    /*
+        TODO: verify valid config structure
+        https://github.com/mufeedvh/binserve/issues/6
+    */
+
     env::set_var("JSON_CONFIG", json_string);
     Ok(())
 }
@@ -61,12 +74,11 @@ pub fn setup_config() {
     save_config().ok();
 }
 
-// this function returns the datastructure of the JSON config
-pub fn get_config() -> serde_json::Value {
+// this function returns the JSON config
+pub fn get_config() -> Value {
     let bs_config = env::var("JSON_CONFIG").unwrap();
 
-    let json_config: serde_json::Value =
-        serde_json::from_str(&bs_config).expect("JSON was not well-formatted");
+    let json_config: Value = from_str(&bs_config).expect("JSON was not well-formatted");
 
     json_config
 }
