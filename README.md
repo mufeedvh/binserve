@@ -2,7 +2,7 @@
 
 A blazingly fast static web server with **routing**, **templating**, and **security** in a single binary you can set up with zero code. :fire:
 
-**UPDATE:** Next version will be released this month (February) with Automatic TLS (HTTPS), More speed, SEO features, and much more! :tada:
+**UPDATE:** Next version will be releasing soon with Automatic TLS (HTTPS), More speed, SEO features, and much more! :tada:
 
 <p align="left">
     <img src="https://img.shields.io/badge/version-0.1.0-blue.svg" title="version" alt="version">
