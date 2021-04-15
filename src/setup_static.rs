@@ -24,12 +24,12 @@ pub fn setup_static() -> std::io::Result<()> {
 </html>";
 
     // create binserve static directories and files
-    let static_dir = config["static_directory"].to_string().replace("\"", "");
+    let static_dir = config.static_directory;
     if !Path::new(&static_dir).exists() {
         let index_html_path = format!("{}/index.html", static_dir);
 
         // create `static/` directory
-        fs::create_dir(static_dir).ok();
+        fs::create_dir(&static_dir).ok();
 
         // create `index.html` homepage inside static directory
         if !Path::new(&index_html_path).exists() {
@@ -38,7 +38,7 @@ pub fn setup_static() -> std::io::Result<()> {
         }
     }
 
-    let static_dir = config["static_directory"].to_string().replace("\"", "");
+    let static_dir = &static_dir;
     let assets_dir = format!("{}/assets", static_dir);
     let images_dir = format!("{}/assets/images", static_dir);
     let css_dir = format!("{}/assets/css", static_dir);

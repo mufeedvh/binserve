@@ -15,12 +15,14 @@ use crate::config::get_config;
 static TEMPLATE_DIR: &str = "rendered_templates";
 
 // render each template and saves it to `TEMPLATE_DIR`
-fn engine_write_templates(templates: serde_json::map::Iter) -> std::io::Result<()> {
+fn engine_write_templates(
+    templates: std::collections::hash_map::IntoIter<String, String>,
+) -> std::io::Result<()> {
     let config = get_config();
 
-    let static_dir = config["static_directory"].to_string().replace("\"", "");
+    let static_dir = config.static_directory;
 
-    let template_variables = config["template_variables"].as_object().unwrap();
+    let template_variables = config.template_variables;
 
     // iterates through all the static files and renders it
     for (_key, value) in templates {
@@ -58,10 +60,6 @@ pub fn render_templates() {
 
     let config = get_config();
 
-    // converting JSON structures to iterable structures
-    let templates = config["routes"].as_object().unwrap().into_iter();
-    let error_page_templates = config["error_pages"].as_object().unwrap().into_iter();
-
-    engine_write_templates(templates).ok();
-    engine_write_templates(error_page_templates).ok();
+    engine_write_templates(config.routes.into_iter()).ok();
+    engine_write_templates(config.error_pages.into_iter()).ok();
 }

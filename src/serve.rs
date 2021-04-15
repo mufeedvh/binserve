@@ -17,20 +17,17 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
 
     let config = get_config();
 
-    let routes = config["routes"][req_path].to_string().replace("\"", "");
-
     let status_code;
-    /*
-        404 Not Found Handler
-        `routes` returns 'null' if the route entry doesn't exist
-    */
-    let response_file = if routes == "null" {
-        let page_404 = config["error_pages"]["404"].to_string().replace("\"", "");
-        status_code = StatusCode::NOT_FOUND;
-        format!("{}/{}", TEMPLATE_DIR, page_404)
-    } else {
+    let response_file = if let Some(path) = config.routes.get(&req_path) {
         status_code = StatusCode::OK;
-        format!("{}/{}", TEMPLATE_DIR, routes)
+        format!("{}/{}", TEMPLATE_DIR, path)
+    } else {
+        /*
+            404 Not Found Handler
+            `config["routes"][...]` returns 'null' if the route entry doesn't exist
+        */
+        status_code = StatusCode::NOT_FOUND;
+        format!("{}/{}", TEMPLATE_DIR, *crate::config::PAGE_404)
     };
 
     Ok(NamedFile::open(response_file)?

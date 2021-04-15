@@ -2,13 +2,18 @@
     `config.rs` - Configuration Functions
     generate, save, and get config
 */
+use std::collections::HashMap;
 use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, Write};
 use std::path::Path;
+use std::process;
 
-use serde_json::{Value, from_str};
+use serde::{Deserialize, Serialize};
+use serde_json::{from_str, Value};
+
+use lazy_static::lazy_static;
 
 // config filename
 static CONFIG_FILE: &str = "binserve.json";
@@ -23,7 +28,6 @@ fn save_config() -> std::io::Result<()> {
     let mut buf_reader = BufReader::new(config_file);
     let mut json_string = String::new();
     buf_reader.read_to_string(&mut json_string)?;
-    
     /*
         TODO: verify valid config structure
         https://github.com/mufeedvh/binserve/issues/6
@@ -31,6 +35,24 @@ fn save_config() -> std::io::Result<()> {
 
     env::set_var("JSON_CONFIG", json_string);
     Ok(())
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ServerConfig {
+    pub host: String,
+    pub port: u16,
+}
+
+#[derive(Deserialize, Serialize, Clone)]
+pub struct ConfigData {
+    pub server: ServerConfig,
+    pub static_directory: String,
+    pub routes: HashMap<String, String>,
+    pub template_variables: serde_json::Map<String, Value>,
+    pub error_pages: HashMap<String, String>,
+    pub enable_logging: bool,
+    pub directory_listing: bool,
+    pub follow_symlinks: bool,
 }
 
 // generate the config file for binserve - `binserve.json`
@@ -50,7 +72,8 @@ fn generate_config_file() -> std::io::Result<()> {
             "name": "Binserve"
         },
         "error_pages": {
-            "404": "404.html"
+            "404": "404.html",
+            "500": "500.html"
         },
         "enable_logging": true,
         "directory_listing": false,
@@ -74,10 +97,34 @@ pub fn setup_config() {
 }
 
 // this function returns the JSON config
-pub fn get_config() -> Value {
+pub fn get_config() -> ConfigData {
     let bs_config = env::var("JSON_CONFIG").unwrap();
 
-    let json_config: Value = from_str(&bs_config).expect("JSON was not well-formatted");
+    if let Ok(json_config) = from_str::<ConfigData>(&bs_config) {
+        json_config
+    } else {
+        abort("malformed config file".to_string());
+    }
+}
 
-    json_config
+fn abort(message: String) -> ! {
+    println!("{}", message);
+    process::exit(1)
+}
+fn get_err_pages() -> (String, String) {
+    let config = get_config();
+    let error_pages = &config.error_pages;
+    match (&error_pages.get("404"), &error_pages.get("500")) {
+        (Some(p_404), Some(p_500)) => (p_404.to_string(), p_500.to_string()),
+        (Some(_), None) => abort("500 page not specified".to_string()),
+        (None, Some(_)) => abort("404 page not specified".to_string()),
+        (None, None) => {
+            abort("required 404 and 500 error page templates not specified".to_string())
+        }
+    }
+}
+lazy_static! {
+    static ref ERR_PAGES: (String, String) = get_err_pages();
+    pub static ref PAGE_404: String = ERR_PAGES.0.to_string();
+    pub static ref PAGE_500: String = ERR_PAGES.1.to_string();
 }

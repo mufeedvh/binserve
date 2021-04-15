@@ -15,14 +15,11 @@ use crate::config::get_config;
 fn safe_symlink(file: &str) -> i32 {
     let config = get_config();
 
-    let follow_symlink = config["follow_symlinks"].to_string();
-    let static_dir = config["static_directory"].to_string().replace("\"", "");
-
     let mut vulns_found = 0;
 
     // if `follow_symlinks` is enabled in config
-    if follow_symlink != "true" {
-        let file_path = format!("{}/{}", static_dir, file);
+    if config.follow_symlinks {
+        let file_path = format!("{}/{}", config.static_directory, file);
 
         if Path::new(&file_path).exists() {
             // check if file is a symlink
@@ -34,13 +31,13 @@ fn safe_symlink(file: &str) -> i32 {
                 // print out help and error message to rectify the issues
                 println!(
                     "\n[!] ERROR::FOUND_SYMLINK: The `{}/{}` file is a symlink.\n",
-                    static_dir, file
+                    config.static_directory, file
                 );
                 println!(
                     "\n[-] INFO: You've disabled symlinks in your configuration as it can lead to potential attacks.\n"
                 );
                 println!(
-                    "\n[?] WHAT TO DO: You can either allow symlinks or delete the symlink file at `{}/{}`\n", static_dir, file
+                    "\n[?] WHAT TO DO: You can either allow symlinks or delete the symlink file at `{}/{}`\n", config.static_directory, file
                 );
             }
         }
@@ -71,7 +68,9 @@ fn path_traversal(route: &str) -> i32 {
 }
 
 // iterate through all the route files and pass to security validation functions
-fn validate_file(routes: serde_json::map::Iter) -> std::io::Result<()> {
+fn validate_file(
+    routes: std::collections::hash_map::IntoIter<String, String>,
+) -> std::io::Result<()> {
     // total vulnerabilities found
     let mut vulns_found = 0;
 
@@ -105,10 +104,6 @@ fn validate_file(routes: serde_json::map::Iter) -> std::io::Result<()> {
 pub fn is_config_secure() {
     let config = get_config();
 
-    // converting JSON structures to iterable structures
-    let routes = config["routes"].as_object().unwrap().into_iter();
-    let error_pages = config["error_pages"].as_object().unwrap().into_iter();
-
-    validate_file(routes).ok();
-    validate_file(error_pages).ok();
+    validate_file(config.routes.into_iter()).ok();
+    validate_file(config.error_pages.into_iter()).ok();
 }

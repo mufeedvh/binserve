@@ -41,14 +41,10 @@ async fn main() -> std::io::Result<()> {
     let config = config::get_config();
 
     // enable/disable logging
-    let enable_logging = config["enable_logging"].to_string();
-    if enable_logging == "true" {
+    if config.enable_logging {
         set_var("RUST_LOG", "actix_web=info");
         env_logger::init();
     }
-
-    let host = config["server"]["host"].to_string().replace("\"", "");
-    let port = config["server"]["port"].to_string();
 
     // ASCII art banner always looks cool
     println!(
@@ -63,14 +59,13 @@ async fn main() -> std::io::Result<()> {
     // print out `host` and `port` of the server
     println!(
         "\nYour server is up and running at http://{}:{}/\n",
-        host, port
+        config.server.host, config.server.port
     );
-
-    let directory_listing_enabled = config["directory_listing"].to_string();
+    let server_config = config.server.clone();
 
     HttpServer::new(move || {
         //`.show_files_listing()` mode is set if directory listing is enabled in config
-        if directory_listing_enabled == "true" {
+        if config.directory_listing {
             App::new()
                 // enable the logger middleware
                 .wrap(middleware::Logger::default())
@@ -78,7 +73,7 @@ async fn main() -> std::io::Result<()> {
                     Files::new("/static", "static/assets/")
                         .show_files_listing()
                         .prefer_utf8(true)
-                        .use_last_modified(true)
+                        .use_last_modified(true),
                 )
                 // serve static files
                 .route("/{route:.*}", web::get().to(serve_content))
@@ -89,13 +84,13 @@ async fn main() -> std::io::Result<()> {
                 .service(
                     Files::new("/static", "static/assets/")
                         .prefer_utf8(true)
-                        .use_last_modified(true)
+                        .use_last_modified(true),
                 )
                 // serve static files
                 .route("/{route:.*}", web::get().to(serve_content))
         }
     })
-    .bind(format!("{}:{}", host, port))?
+    .bind(format!("{}:{}", server_config.host, server_config.port))?
     .run()
     .await
 }
