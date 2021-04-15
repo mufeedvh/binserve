@@ -39,26 +39,27 @@ pub fn setup_static() -> std::io::Result<()> {
     }
 
     let static_dir = &static_dir;
-    let assets_dir = format!("{}/assets", static_dir);
-    let images_dir = format!("{}/assets/images", static_dir);
-    let css_dir = format!("{}/assets/css", static_dir);
-    let js_dir = format!("{}/assets/js", static_dir);
+    let static_dir = Path::new(static_dir);
+    let assets_dir = static_dir.join("assets");
+    let images_dir = assets_dir.join("images");
+    let css_dir = assets_dir.join("css");
+    let js_dir = assets_dir.join("js");
 
     // create `assets/` directory
     if !Path::new(&assets_dir).exists() {
-        fs::create_dir(assets_dir).ok();
+        fs::create_dir(assets_dir)?;
     }
     // create `assets/images/` directory
     if !Path::new(&images_dir).exists() {
-        fs::create_dir(images_dir).ok();
+        fs::create_dir(images_dir)?;
     }
     // create `assets/css/` directory
     if !Path::new(&css_dir).exists() {
-        fs::create_dir(css_dir).ok();
+        fs::create_dir(css_dir)?;
     }
     // create `assets/js/` directory
     if !Path::new(&js_dir).exists() {
-        fs::create_dir(js_dir).ok();
+        fs::create_dir(js_dir)?;
     }
 
     Ok(())
