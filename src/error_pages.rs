@@ -2,7 +2,7 @@
     `error_page.rs` - Error Page Generation
     generate error pages
 */
-use crate::config::get_config;
+use crate::config::CONFIG;
 use std::fs::File;
 use std::io::Write;
 use std::path::Path;
@@ -45,7 +45,6 @@ fn generate_500_page(static_dir: &str) -> std::io::Result<()> {
 }
 
 pub fn generate_error_pages() {
-    let config = get_config();
-    generate_404_page(&config.static_directory).ok();
-    generate_500_page(&config.static_directory).ok();
+    generate_404_page(&CONFIG.static_directory).ok();
+    generate_500_page(&CONFIG.static_directory).ok();
 }

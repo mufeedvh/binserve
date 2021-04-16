@@ -10,6 +10,7 @@ mod serve;
 mod setup_static;
 mod template;
 
+use crate::config::CONFIG;
 use error_pages::generate_error_pages;
 use security::is_config_secure;
 use serve::serve_content;
@@ -17,9 +18,6 @@ use setup_static::setup_static;
 use template::render_templates;
 
 fn binserve_init() {
-    // setup binserve configuration
-    config::setup_config();
-
     // setup static files
     setup_static().ok();
 
@@ -38,10 +36,8 @@ async fn main() -> std::io::Result<()> {
     // init binserve server config & files
     binserve_init();
 
-    let config = config::get_config();
-
     // enable/disable logging
-    if config.enable_logging {
+    if CONFIG.enable_logging {
         set_var("RUST_LOG", "actix_web=info");
         env_logger::init();
     }
@@ -59,13 +55,13 @@ async fn main() -> std::io::Result<()> {
     // print out `host` and `port` of the server
     println!(
         "\nYour server is up and running at http://{}:{}/\n",
-        config.server.host, config.server.port
+        CONFIG.server.host, CONFIG.server.port
     );
-    let server_config = config.server.clone();
+    let server_config = CONFIG.server.clone();
 
     HttpServer::new(move || {
         //`.show_files_listing()` mode is set if directory listing is enabled in config
-        if config.directory_listing {
+        if CONFIG.directory_listing {
             App::new()
                 // enable the logger middleware
                 .wrap(middleware::Logger::default())

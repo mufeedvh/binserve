@@ -3,7 +3,6 @@
     generate, save, and get config
 */
 use std::collections::HashMap;
-use std::env;
 use std::fs::File;
 use std::io::prelude::*;
 use std::io::{BufReader, Write};
@@ -23,18 +22,13 @@ static CONFIG_FILE: &str = "binserve.json";
 */
 
 // save the config to an environment variable
-fn save_config() -> std::io::Result<()> {
+fn load_config() -> std::io::Result<ConfigData> {
     let config_file = File::open(CONFIG_FILE)?;
     let mut buf_reader = BufReader::new(config_file);
     let mut json_string = String::new();
     buf_reader.read_to_string(&mut json_string)?;
-    /*
-        TODO: verify valid config structure
-        https://github.com/mufeedvh/binserve/issues/6
-    */
-
-    env::set_var("JSON_CONFIG", json_string);
-    Ok(())
+    let config: ConfigData = from_str(&json_string)?;
+    Ok(config)
 }
 
 #[derive(Deserialize, Serialize, Clone)]
@@ -88,23 +82,12 @@ fn generate_config_file() -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn setup_config() {
+pub fn setup_config() -> std::io::Result<ConfigData> {
     // only generate the config file if it doesn't exist already
     if !Path::new(CONFIG_FILE).exists() {
         generate_config_file().ok();
     }
-    save_config().ok();
-}
-
-// this function returns the JSON config
-pub fn get_config() -> ConfigData {
-    let bs_config = env::var("JSON_CONFIG").unwrap();
-
-    if let Ok(json_config) = from_str::<ConfigData>(&bs_config) {
-        json_config
-    } else {
-        abort("malformed config file".to_string());
-    }
+    load_config()
 }
 
 fn abort(message: String) -> ! {
@@ -112,8 +95,7 @@ fn abort(message: String) -> ! {
     process::exit(1)
 }
 fn get_err_pages() -> (String, String) {
-    let config = get_config();
-    let error_pages = &config.error_pages;
+    let error_pages = &CONFIG.error_pages;
     match (&error_pages.get("404"), &error_pages.get("500")) {
         (Some(p_404), Some(p_500)) => (p_404.to_string(), p_500.to_string()),
         (Some(_), None) => abort("500 page not specified".to_string()),
@@ -125,6 +107,7 @@ fn get_err_pages() -> (String, String) {
 }
 lazy_static! {
     static ref ERR_PAGES: (String, String) = get_err_pages();
+    pub static ref CONFIG: ConfigData = setup_config().unwrap();
     pub static ref PAGE_404: String = ERR_PAGES.0.to_string();
     pub static ref PAGE_500: String = ERR_PAGES.1.to_string();
 }

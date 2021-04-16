@@ -9,20 +9,18 @@ use std::path::Path;
 
 use handlebars::Handlebars;
 
-use crate::config::get_config;
+use crate::config::CONFIG;
 
 // directory to save rendered templates
 static TEMPLATE_DIR: &str = "rendered_templates";
 
 // render each template and saves it to `TEMPLATE_DIR`
 fn engine_write_templates(
-    templates: std::collections::hash_map::IntoIter<String, String>,
+    templates: std::collections::hash_map::Iter<String, String>,
 ) -> std::io::Result<()> {
-    let config = get_config();
+    let static_dir = &CONFIG.static_directory;
 
-    let static_dir = config.static_directory;
-
-    let template_variables = config.template_variables;
+    let template_variables = &CONFIG.template_variables;
 
     // iterates through all the static files and renders it
     for (_key, value) in templates {
@@ -58,8 +56,6 @@ pub fn render_templates() {
         fs::create_dir(TEMPLATE_DIR).ok();
     }
 
-    let config = get_config();
-
-    engine_write_templates(config.routes.into_iter()).ok();
-    engine_write_templates(config.error_pages.into_iter()).ok();
+    engine_write_templates((&CONFIG.routes).into_iter()).ok();
+    engine_write_templates((&CONFIG.error_pages).into_iter()).ok();
 }

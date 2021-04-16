@@ -6,12 +6,10 @@ use std::fs;
 use std::io::prelude::*;
 use std::path::Path;
 
-use crate::config::get_config;
+use crate::config::CONFIG;
 
 // setup all the default static files
 pub fn setup_static() -> std::io::Result<()> {
-    let config = get_config();
-
     // default `index.html` template
     const INDEX_CONTENTS: &str = "<html>
     <title>{{name}}</title>
@@ -24,7 +22,7 @@ pub fn setup_static() -> std::io::Result<()> {
 </html>";
 
     // create binserve static directories and files
-    let static_dir = config.static_directory;
+    let static_dir = &CONFIG.static_directory;
     if !Path::new(&static_dir).exists() {
         let index_html_path = format!("{}/index.html", static_dir);
 

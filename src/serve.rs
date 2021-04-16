@@ -6,7 +6,7 @@ use actix_files::NamedFile;
 use actix_web::http::StatusCode;
 use actix_web::{HttpRequest, Result};
 
-use crate::config::get_config;
+use crate::config::CONFIG;
 
 // directory of rendered templates
 static TEMPLATE_DIR: &str = "rendered_templates";
@@ -15,10 +15,8 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
     // get the HTTP request path
     let req_path = format!("/{}", req.match_info().query("route"));
 
-    let config = get_config();
-
     let status_code;
-    let response_file = if let Some(path) = config.routes.get(&req_path) {
+    let response_file = if let Some(path) = CONFIG.routes.get(&req_path) {
         status_code = StatusCode::OK;
         format!("{}/{}", TEMPLATE_DIR, path)
     } else {
