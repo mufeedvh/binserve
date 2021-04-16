@@ -47,6 +47,7 @@ pub struct ConfigData {
     pub enable_logging: bool,
     pub directory_listing: bool,
     pub follow_symlinks: bool,
+    pub minify: bool,
 }
 
 // generate the config file for binserve - `binserve.json`
@@ -71,7 +72,8 @@ fn generate_config_file() -> std::io::Result<()> {
         },
         "enable_logging": true,
         "directory_listing": false,
-        "follow_symlinks": false
+        "follow_symlinks": false,
+        "minify": false
     });
 
     let contents = serde_json::to_string_pretty(&config_obj).unwrap();

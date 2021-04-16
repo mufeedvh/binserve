@@ -10,6 +10,7 @@ use std::path::Path;
 use handlebars::Handlebars;
 
 use crate::config::CONFIG;
+use minify::html::minify;
 
 // directory to save rendered templates
 static TEMPLATE_DIR: &str = "rendered_templates";
@@ -39,7 +40,11 @@ fn engine_write_templates(
         let rendered_template = reg
             .render_template(&file_content, &serde_json::json!(template_variables))
             .unwrap();
-
+        let rendered_template = if CONFIG.minify {
+            minify(&rendered_template)
+        } else {
+            rendered_template
+        };
         // write the templates to `TEMPLATE_DIR`
         let template_to_write = format!("{}/{}", TEMPLATE_DIR, filename);
         let mut file = fs::File::create(template_to_write)?;
