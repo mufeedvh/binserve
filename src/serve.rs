@@ -2,6 +2,8 @@
     `serve.rs` - HTTP Request/Response Management, Route Validation & Serving
     validates routes & serves HTTP responses with the corresponding route files
 */
+use std::path::Path;
+
 use actix_files::NamedFile;
 use actix_web::http::StatusCode;
 use actix_web::{HttpRequest, Result};
@@ -25,7 +27,11 @@ pub async fn serve_content(req: HttpRequest) -> Result<NamedFile> {
             `config["routes"][...]` returns 'null' if the route entry doesn't exist
         */
         status_code = StatusCode::NOT_FOUND;
-        format!("{}/{}", TEMPLATE_DIR, *crate::config::PAGE_404)
+        format!(
+            "{}/{}",
+            TEMPLATE_DIR,
+            Path::new(TEMPLATE_DIR).join("404.html").display()
+        )
     };
 
     Ok(NamedFile::open(response_file)?

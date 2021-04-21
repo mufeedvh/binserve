@@ -99,5 +99,4 @@ fn validate_file(routes: std::collections::hash_map::Iter<String, String>) -> st
 // pass all the route files for validation
 pub fn is_config_secure() {
     validate_file((&CONFIG.routes).into_iter()).ok();
-    validate_file((&CONFIG.error_pages).into_iter()).ok();
 }

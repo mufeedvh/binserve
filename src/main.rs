@@ -1,9 +1,10 @@
 use actix_files::Files;
 use actix_web::{middleware, web, App, HttpServer};
 
-use std::env::set_var;
+use std::env::{set_var, var};
 
 mod config;
+mod error;
 mod error_pages;
 mod security;
 mod serve;
@@ -11,7 +12,7 @@ mod setup_static;
 mod template;
 
 use crate::config::CONFIG;
-use error_pages::generate_error_pages;
+use error_pages::generate_error_template;
 use security::is_config_secure;
 use serve::serve_content;
 use setup_static::setup_static;
@@ -19,16 +20,22 @@ use template::render_templates;
 
 fn binserve_init() {
     // setup static files
-    setup_static().ok();
+    if let Err(err) = setup_static() {
+        err.fatal();
+    }
 
     // validate routes for security vulnerabilities
     is_config_secure();
 
     // generate static error pages
-    generate_error_pages();
+    if let Err(err) = generate_error_template() {
+        err.fatal();
+    }
 
     // render templates
-    render_templates();
+    if let Err(err) = render_templates() {
+        err.fatal();
+    }
 }
 
 #[actix_web::main]
@@ -37,7 +44,7 @@ async fn main() -> std::io::Result<()> {
     binserve_init();
 
     // enable/disable logging
-    if CONFIG.enable_logging {
+    if CONFIG.enable_logging && var("RUST_LOG").is_err() {
         set_var("RUST_LOG", "actix_web=info");
         env_logger::init();
     }

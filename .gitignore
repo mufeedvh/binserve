@@ -18,3 +18,4 @@ Cargo.lock
 /static
 binserve.json
 release.py
+templates
