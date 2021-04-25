@@ -3,8 +3,9 @@
     generates templates of static HTML files with `Handlebars`
 */
 mod content_buffer;
+use std::collections::HashMap;
 use std::fs;
-use std::fs::{create_dir_all, File};
+use std::fs::{create_dir_all, read_dir, File};
 use std::io::prelude::*;
 use std::io::ErrorKind;
 use std::path::Path;
@@ -43,10 +44,51 @@ fn read_layout() -> String {
     }
 }
 
+// iterate over the files in the directory, recursively adding their content to the list of partials
+fn read_partials_impl(partials: &mut HashMap<String, String>, dir: &String) -> Result<()> {
+    for f in read_dir(dir)? {
+        if let Ok(f) = f {
+            if let Ok(ft) = f.file_type() {
+                if ft.is_dir() {
+                    read_partials_impl(
+                        partials,
+                        &String::from(
+                            f.path()
+                                .to_str()
+                                .ok_or(Error::from(format!("invalid path {:?}", f)))?,
+                        ),
+                    )?;
+                } else if ft.is_file() {
+                    let path = f.path();
+                    if let Some(path_str) = path.to_str() {
+                        let mut file = File::open(&path)?;
+                        let mut string = String::new();
+                        file.read_to_string(&mut string)?;
+                        partials.insert(String::from(path_str), string);
+                    } else {
+                        println!("WARNING: invalid file path at {}", path.display())
+                    }
+                }
+            }
+        }
+    }
+    Ok(())
+}
+
+///
+fn read_partials() -> Result<HashMap<String, String>> {
+    let mut partials = HashMap::new();
+    if let Some(templates) = &CONFIG.templates {
+        read_partials_impl(&mut partials, &templates.partials_directory)?;
+    }
+    Ok(partials)
+}
+
 lazy_static! {
     /// The content of the configured layout file. Empty if no such
     /// configuration.
     pub static ref LAYOUT_CONTENT: String = read_layout();
+    pub static ref PARTIALS: HashMap<String, String> = read_partials().expect("failed to read partials directory");
 }
 
 struct TemplateWriter {
@@ -107,6 +149,9 @@ impl TemplateWriter {
                 b"{{/inline}}\n{{> layout}}",
             );
             bars.register_template_source("content", &mut content)?;
+            for (path, content) in PARTIALS.iter() {
+                bars.register_template_string(path, content)?;
+            }
         } else {
             bars.register_template_file("layout", path)?;
         }
