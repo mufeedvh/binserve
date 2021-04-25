@@ -8,10 +8,8 @@ use std::process;
 
 use crate::config::CONFIG;
 
-/*
-    reading symlink files pointing to a sensitive file can leak information,
-    this function validates a file is a symlink or not
-*/
+/// reading symlink files pointing to a sensitive file can leak information,
+/// this function validates a file is a symlink or not
 fn safe_symlink(file: &str) -> i32 {
     let mut vulns_found = 0;
 
@@ -44,10 +42,8 @@ fn safe_symlink(file: &str) -> i32 {
     vulns_found
 }
 
-/*
-    reading files outside the process directory can leak information,
-    this function checks if the file is outside the process directory
-*/
+/// reading files outside the process directory can leak information,
+/// this function checks if the file is outside the process directory
 fn path_traversal(route: &str) -> i32 {
     let mut vulns_found = 0;
 
@@ -65,7 +61,7 @@ fn path_traversal(route: &str) -> i32 {
     vulns_found
 }
 
-// iterate through all the route files and pass to security validation functions
+/// iterate through all the route files and pass to security validation functions
 fn validate_file(routes: std::collections::hash_map::Iter<String, String>) -> std::io::Result<()> {
     // total vulnerabilities found
     let mut vulns_found = 0;
@@ -96,7 +92,7 @@ fn validate_file(routes: std::collections::hash_map::Iter<String, String>) -> st
     Ok(())
 }
 
-// pass all the route files for validation
+/// pass all the route files for validation
 pub fn is_config_secure() {
-    validate_file((&CONFIG.routes).into_iter()).ok();
+    validate_file((&CONFIG.routes).into_iter()).expect("insecure configuration");
 }

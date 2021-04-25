@@ -20,5 +20,7 @@ lazy_static = "1.4.0"
 
 minify = "1.2.0"
 
+maplit = "1.0"
+
 [profile.release]
 lto = true

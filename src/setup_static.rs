@@ -95,7 +95,7 @@ pub fn generate_templates() -> Result<()> {
     }
 }
 
-// setup all the default static files
+/// setup all the default static files
 pub fn setup_static() -> Result<()> {
     generate_templates()
 }

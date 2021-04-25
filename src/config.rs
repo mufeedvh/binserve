@@ -8,15 +8,14 @@ use std::io::prelude::*;
 use std::io::{BufReader, Write};
 use std::path::Path;
 
+use lazy_static::lazy_static;
 use serde::{Deserialize, Serialize};
 use serde_json::{from_str, Value};
-
-use lazy_static::lazy_static;
 
 // config filename
 static CONFIG_FILE: &str = "binserve.json";
 
-// save the config to an environment variable
+/// return the config from binserve.json
 fn load_config() -> std::io::Result<ConfigData> {
     let config_file = File::open(CONFIG_FILE)?;
     let mut buf_reader = BufReader::new(config_file);
@@ -50,9 +49,10 @@ pub struct ConfigData {
     pub follow_symlinks: bool,
     pub minify: bool,
     pub templates: Option<TemplatesConfig>,
+    pub error_pages: Option<HashMap<String, String>>,
 }
 
-// generate the config file for binserve - `binserve.json`
+/// generate the initial config file for binserve - `binserve.json`
 fn generate_config_file() -> std::io::Result<()> {
     let config_obj = serde_json::json!({
         "server": {
@@ -82,19 +82,19 @@ fn generate_config_file() -> std::io::Result<()> {
     let contents = serde_json::to_string_pretty(&config_obj).unwrap();
 
     let mut file = File::create(CONFIG_FILE)?;
-    file.write_all(contents.as_bytes())?;
-
-    Ok(())
+    file.write_all(contents.as_bytes())
 }
 
+/// Return the loaded config, generating a default config file if none exists.
 pub fn setup_config() -> std::io::Result<ConfigData> {
     // only generate the config file if it doesn't exist already
     if !Path::new(CONFIG_FILE).exists() {
-        generate_config_file().ok();
+        generate_config_file()?;
     }
     load_config()
 }
 
 lazy_static! {
-    pub static ref CONFIG: ConfigData = setup_config().unwrap();
+    /// global in-memory store of config data
+    pub static ref CONFIG: ConfigData = setup_config().expect("failed to load or generate config");
 }
