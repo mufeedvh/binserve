@@ -1,7 +1,7 @@
 [package]
 name = "binserve"
-version = "0.1.0"
-authors = ["mufeedvh <mufeedvh@gmail.com>"]
+version = "0.2.0"
+authors = ["mufeedvh <mufeedvh@gmail.com>", "dscottboggs <scott@tams.tech>"]
 edition = "2018"
 
 [dependencies]

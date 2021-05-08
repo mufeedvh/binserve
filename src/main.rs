@@ -1,6 +1,6 @@
 #![feature(box_syntax)]
 use actix_files::Files;
-use actix_web::{middleware, web, App, HttpServer};
+use actix_web::{middleware, web::get as GET, App, HttpServer};
 
 use std::env::{set_var, var};
 
@@ -70,33 +70,26 @@ async fn main() -> std::io::Result<()> {
     let server_config = CONFIG.server.clone();
 
     HttpServer::new(move || {
-        //`.show_files_listing()` mode is set if directory listing is enabled in config
-        if CONFIG.directory_listing {
-            App::new()
-                // enable the logger middleware
-                .wrap(middleware::Logger::default())
-                .service(
-                    Files::new("/static", "static/assets/")
-                        .show_files_listing()
-                        .prefer_utf8(true)
-                        .use_last_modified(true),
-                )
-                // serve static files
-                .route("/{route:.*}", web::get().to(serve_content))
-        } else {
-            App::new()
-                // enable the logger middlware
-                .wrap(middleware::Logger::default())
-                .service(
-                    Files::new("/static", "static/assets/")
-                        .prefer_utf8(true)
-                        .use_last_modified(true),
-                )
-                // serve static files
-                .route("/{route:.*}", web::get().to(serve_content))
-        }
+        App::new()
+            // enable the logger middleware
+            .wrap(middleware::Logger::default())
+            .service(setup_file_service())
+            // serve static files
+            .route("/{route:.*}", GET().to(serve_content))
     })
     .bind(format!("{}:{}", server_config.host, server_config.port))?
     .run()
     .await
+}
+
+fn setup_file_service() -> Files {
+    let fs = Files::new("/", "rendered_templates/");
+    //`.show_files_listing()` mode is set if directory listing is enabled in config
+    if CONFIG.directory_listing {
+        fs.show_files_listing()
+    } else {
+        fs
+    }
+    .prefer_utf8(true)
+    .use_last_modified(true)
 }
