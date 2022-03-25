@@ -8,6 +8,8 @@ A blazingly fast static web server with **routing**, **templating**, and **secur
     <a href="https://twitter.com/intent/tweet?text=Check%20this%20out!%20A%20blazingly%20fast%20static%20web%20server%20in%20a%20single%20binary%20you%20can%20set%20up%20with%20zero%20code.:&url=https%3A%2F%2Fgithub.com%2Fmufeedvh%2Fbinserve"><img alt="Twitter" src="https://img.shields.io/twitter/url/https/github.com/mufeedvh/binserve.svg?style=social"></a>
 </p>
 
+> **Update:** [v0.2.0 Draft](https://github.com/mufeedvh/binserve/issues/29)
+
 ## Table of Contents
 
 * [Features](#features)
