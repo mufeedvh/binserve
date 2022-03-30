@@ -66,34 +66,22 @@ async fn main() -> std::io::Result<()> {
         host, port
     );
 
-    let directory_listing_enabled = config["directory_listing"].to_string();
-
     HttpServer::new(move || {
-        //`.show_files_listing()` mode is set if directory listing is enabled in config
-        if directory_listing_enabled == "true" {
-            App::new()
-                // enable the logger middleware
-                .wrap(middleware::Logger::default())
-                .service(
-                    Files::new("/static", "static/assets/")
-                        .show_files_listing()
-                        .prefer_utf8(true)
-                        .use_last_modified(true)
-                )
-                // serve static files
-                .route("/{route:.*}", web::get().to(serve_content))
-        } else {
-            App::new()
-                // enable the logger middlware
-                .wrap(middleware::Logger::default())
-                .service(
-                    Files::new("/static", "static/assets/")
-                        .prefer_utf8(true)
-                        .use_last_modified(true)
-                )
-                // serve static files
-                .route("/{route:.*}", web::get().to(serve_content))
+        let mut files = Files::new("/static", "static/assets/")
+            .prefer_utf8(true)
+            .use_last_modified(true);
+
+        // Hide directories by default
+        if config["directory_listing"].as_bool().unwrap_or(false) {
+            files = files.show_files_listing()
         }
+
+        App::new()
+            // enable the logger middleware
+            .wrap(middleware::Logger::default())
+            .service(files)
+            // serve static files
+            .route("/{route:.*}", web::get().to(serve_content))
     })
     .bind(format!("{}:{}", host, port))?
     .run()
