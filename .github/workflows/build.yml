@@ -9,7 +9,7 @@ name: CICD
 
 env:
   PROJECT_NAME: binserve
-  PROJECT_DESC: "A blazingly fast static web server in a single binary you can set up with zero code. ⚡🦀"
+  PROJECT_DESC: "A fast static web server with TLS (HTTPS), Routing, Hot Reloading, Caching, Templating, and Security in a single-binary you can set up with zero code."
   PROJECT_AUTH: "mufeedvh"
   RUST_MIN_SRV: "1.42.0" ## minimum supported rust version (aka, MinSRV or MSRV)
   RUST_COV_SRV: "2020-08-01" ## (~v1.47.0) supported rust version for code coverage; (date required/used by 'coverage')

@@ -1,20 +1,38 @@
 [package]
 name = "binserve"
-version = "0.1.0"
-authors = ["mufeedvh <mufeedvh@gmail.com>"]
-edition = "2018"
+version = "0.2.0"
+edition = "2021"
 
 [dependencies]
-futures = "0.3.5"
-env_logger = "0.7.1"
-
-actix-web = "3"
-actix-files = "0.4.0"
-
-serde = { version = "1.0.116", features = ["derive"] }
-serde_json = "1.0.58"
-
-handlebars = "3.5.0"
+actix-files = "0.6.0"
+actix-web = { version = "4.0.1", features = ["rustls"] }
+actix-web-lab = "0.16.1"
+ahash = "0.7.6"
+anyhow = "1.0.57"
+clap = "3.1.18"
+colored = "2.0.0"
+compact_str = "0.4.0"
+dashmap = "5.3.4"
+env_logger = "0.9.0"
+etag = { version = "3.0.0", features = ["std"] }
+handlebars = "4.3.1"
+jwalk = "0.6.0"
+minify-html-onepass = "0.8.0"
+new_mime_guess = "4.0.1"
+notify = "4.0.17"
+num_cpus = "1.13.1"
+once_cell = { version = "1.12.0", features = ["parking_lot"] }
+parking_lot = "0.12.1"
+rustls = "0.20.6"
+rustls-pemfile = "1.0.0"
+serde = { version = "1.0.137", features = ["derive"] }
+serde_json = "1.0.81"
 
 [profile.release]
-lto = true
+opt-level = 3
+codegen-units = 1
+panic = 'abort'
+lto = "thin"
+debug = false
+incremental = false
+overflow-checks = false
