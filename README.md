@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/mufeedvh/binserve/main/assets/binserve-logo.png" alt="binserve logo" width="250" align="right">
+<img src="https://raw.githubusercontent.com/mufeedvh/binserve/master/assets/binserve-logo.png" alt="binserve logo" width="250" align="right">
 
 # `binserve` :rocket::crab:
 
@@ -259,7 +259,7 @@ Binserve is cross-platform which means you can run it on any major operating sys
 
 <div align="center">
     <table>
-        <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/main/assets/binserve-android.gif" width="200"></td></tr>
+        <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/master/assets/binserve-android.gif" width="200"></td></tr>
     </table>
 </div>
 
@@ -273,7 +273,7 @@ Under the hood, binserve maps the routes and prepares the response with the file
 
 <div align="center">
   <table>
-    <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/main/assets/benchmarks.jpeg" width="500"></td></tr>
+    <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/master/assets/benchmarks.jpeg" width="500"></td></tr>
   </table>
 </div>
 

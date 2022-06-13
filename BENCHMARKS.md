@@ -22,7 +22,7 @@ Benchmarks are performed with [wrk](https://github.com/wg/wrk). All of the serve
 
 <div align="center">
   <table>
-    <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/main/assets/benchmarks.jpeg" width="500"></td></tr>
+    <tr><td><img src="https://raw.githubusercontent.com/mufeedvh/binserve/master/assets/benchmarks.jpeg" width="500"></td></tr>
   </table>
 </div>
 
