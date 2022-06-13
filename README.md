@@ -21,6 +21,7 @@ Built from the ground up for self-hosters with [performance](#benchmarks), [ease
 * [Configuration](#configuration)
 * [Templates](#templating)
 * [Benchmarks](#benchmarks)
+* [FAQ](#faq)
 * [Contribution](#contribution)
 * [License](#license)
 * [Credits](#credits)
