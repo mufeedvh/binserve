@@ -177,22 +177,22 @@ There is built-in support for TLS:
         "host": "127.0.0.1:1337",
         "tls": {
             "host": "127.0.0.1:443",
-            "enable": false,
+            "enable": true,
             "key": "key.pem",
             "cert": "cert.pem"
         }
-    },
-    // ...
+    }
 }
 ```
 
-The key and cert can be generated with `openssl`:
+The key and certificate can be generated with `openssl`:
 
 ```shell
 # generate pkcs#10 key+cert (PEM):
-openssl req -x509 -newkey rsa:4096 -keyout key_pkcs10.pem -out cert.pem -sha256 -days 36
+$ openssl req -x509 -newkey rsa:4096 -keyout key_pkcs10.pem -out cert.pem -sha256 -days 36
+
 # convert the private key to PKCS#8 (PEM):
-openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in key_pkcs10.pem -out key.pem
+$ openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in key_pkcs10.pem -out key.pem
 ```
 
 ## Templating
