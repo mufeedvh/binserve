@@ -167,6 +167,34 @@ You can override the configuration with command-line arguments as well:
   </ul>
 </ul>
 
+## TLS
+
+There is built-in support for TLS:
+
+```json
+{
+    "server": {
+        "host": "127.0.0.1:1337",
+        "tls": {
+            "host": "127.0.0.1:443",
+            "enable": false,
+            "key": "key.pem",
+            "cert": "cert.pem"
+        }
+    },
+    // ...
+}
+```
+
+The key and cert can be generated with `openssl`:
+
+```shell
+# generate pkcs#10 key+cert (PEM):
+openssl req -x509 -newkey rsa:4096 -keyout key_pkcs10.pem -out cert.pem -sha256 -days 36
+# convert the private key to PKCS#8 (PEM):
+openssl pkcs8 -topk8 -inform PEM -outform PEM -nocrypt -in key_pkcs10.pem -out key.pem
+```
+
 ## Templating
 
 Binserve uses [Handlebars](https://github.com/sunng87/handlebars-rust) for templating as it's simple and the most commonly known templating engine.
