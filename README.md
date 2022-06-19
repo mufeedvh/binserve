@@ -38,7 +38,7 @@ Built from the ground up for self-hosters with [performance](#benchmarks), [ease
 - **Caching:** Binserve's performance is achieved due to minimization of Disk I/O operations at runtime (with `fast_mem_cache` enabled) and serving static files from memory. On the client-side, `Cache-Control`, `Etag`, and `Last-Modified` are utilized.
 - **Security:** Prevents common attack vectors like [Directory Traversal](https://en.wikipedia.org/wiki/Directory_traversal_attack) and [Symlink Attacks](https://capec.mitre.org/data/definitions/132.html).
 
-## 👋 Enterprise?
+# 👋 Enterprise?
 
 If you're deplyoing to production or expecting high traffic to your server, get [binserve+](https://mufeedvh.gumroad.com/l/binserveplus) which has **DDoS Protection**, **Rate Limiting**, and **Prometheus Metrics** for monitoring along with all the above features built-in.
 
