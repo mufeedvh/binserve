@@ -2,7 +2,7 @@
 
 # `binserve` :rocket::crab:
 
-A [fast](#benchmarks) static web server with **TLS** (HTTPS), **Routing**, **Hot Reloading**, **Caching**, **Templating**, and **Security** in a single-binary you can set up with zero code.
+A [**fast**](#benchmarks) static web server with **TLS** (HTTPS), **Routing**, **Hot Reloading**, **Caching**, **Templating**, and **Security** in a single-binary you can set up with zero code.
 
 Built from the ground up for self-hosters with [performance](#benchmarks), [ease of use](#configuration), and [portability](#portability) in mind. ❤️
 
