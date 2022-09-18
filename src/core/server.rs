@@ -150,7 +150,7 @@ pub async fn run_server(config_state: BinserveConfig) -> std::io::Result<()> {
                 // by default env has to be initialized to log events
                 let mut logger = Logger::new("");
 
-                // enable logging middlware
+                // enable logging middleware
                 if config_state.config.enable_logging {
                     env_logger::try_init_from_env(
                         env_logger::Env::new().default_filter_or("info")
@@ -260,7 +260,7 @@ pub async fn run_server(config_state: BinserveConfig) -> std::io::Result<()> {
         app_instance.default_service(web::get().to(router))
     })
     .bind({
-        // port doens't have to be explicitly specified
+        // port doesn't have to be explicitly specified
         let mut host = config_state.server.host.to_owned();
 
         let address = host.split(':');

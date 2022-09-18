@@ -50,9 +50,9 @@ Read [**FAQ**](#faq) for more details.
 
 Download the executable for your OS from [**Releases**](https://github.com/mufeedvh/binserve/releases), then just run it:
 
-```
-$ mkdir mywebsite/
-$ binserve
+```sh
+mkdir mywebsite/
+binserve
 ```
 
 On the first run, it will create the configuration file and a starter boilerplate for you to get started.
@@ -75,8 +75,10 @@ Now all you need to do is to edit the `binserve.json` file. (See [**Configuratio
 
 Download the executable from [**Releases**](https://github.com/mufeedvh/binserve/releases) OR Install with `cargo`:
 
-    $ cargo install --git https://github.com/mufeedvh/binserve.git
-    
+```sh
+cargo install --git https://github.com/mufeedvh/binserve.git
+```
+
 [Install Rust/Cargo](https://rust-lang.org/tools/install)
 
 ### Build From Source
@@ -88,10 +90,10 @@ Download the executable from [**Releases**](https://github.com/mufeedvh/binserve
 * Cargo (Automatically installed when installing Rust)
 * A C linker (Only for Linux, generally comes pre-installed)
 
-```
-$ git clone https://github.com/mufeedvh/binserve.git
-$ cd binserve/
-$ RUSTFLAGS="-C target-cpu=native" cargo build --release
+```sh
+git clone https://github.com/mufeedvh/binserve.git
+cd binserve/
+RUSTFLAGS="-C target-cpu=native" cargo build --release
 ```
 
 The first command clones this repository into your local machine and the last two commands enters the directory and builds the source in release mode.
