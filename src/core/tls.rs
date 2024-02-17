@@ -8,7 +8,7 @@ use anyhow::{Context, Result};
 
 use super::config::CONFIG_STATE;
 
-use crate::cli::messages::{Type, push_message};
+use crate::cli::messages::{push_message, Type};
 
 /// Load TLS configuration
 pub fn load_rustls_config() -> Result<rustls::ServerConfig> {
@@ -23,15 +23,15 @@ pub fn load_rustls_config() -> Result<rustls::ServerConfig> {
     let cert_key_path = &config_state.server.tls.key;
 
     // load TLS key/cert files
-    let cert_file = &mut BufReader::new(
-        File::open(cert_file_path)
-            .with_context(|| format!("Failed to read file {:?}", cert_file_path.to_string_lossy()))?
-    );
+    let cert_file =
+        &mut BufReader::new(File::open(cert_file_path).with_context(|| {
+            format!("Failed to read file {:?}", cert_file_path.to_string_lossy())
+        })?);
 
-    let key_file = &mut BufReader::new(
-        File::open(cert_key_path)
-            .with_context(|| format!("Failed to read file {:?}", cert_key_path.to_string_lossy()))?
-    );
+    let key_file =
+        &mut BufReader::new(File::open(cert_key_path).with_context(|| {
+            format!("Failed to read file {:?}", cert_key_path.to_string_lossy())
+        })?);
 
     // convert files to key/cert objects
     let cert_chain = certs(cert_file)
@@ -52,7 +52,5 @@ pub fn load_rustls_config() -> Result<rustls::ServerConfig> {
         std::process::exit(1);
     }
 
-    Ok(
-        config.with_single_cert(cert_chain, keys.remove(0))?
-    )
+    Ok(config.with_single_cert(cert_chain, keys.remove(0))?)
 }

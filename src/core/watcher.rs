@@ -2,14 +2,14 @@ use notify::{watcher, DebouncedEvent, RecursiveMode, Watcher};
 
 use compact_str::CompactString;
 
+use std::collections::HashMap;
 use std::fs;
 use std::path::PathBuf;
-use std::time::Duration;
 use std::sync::mpsc::channel;
-use std::collections::HashMap;
+use std::time::Duration;
 
+use super::config::{BinserveConfig, CONFIG_FILE};
 use super::routes::{RouteHandle, Type, ROUTEMAP};
-use super::config::{CONFIG_FILE, BinserveConfig};
 use super::templates;
 
 /// Watch for filesystem for updates/writes and hot reload the server state.
@@ -18,7 +18,7 @@ pub fn hot_reload_files() -> anyhow::Result<()> {
 
     // check if hot reload is enabled or not
     if !config_state.config.enable_hot_reload {
-        return Ok(())
+        return Ok(());
     }
 
     // Create a channel to receive the events.
@@ -44,8 +44,8 @@ pub fn hot_reload_files() -> anyhow::Result<()> {
             let key = route.key();
             let file_path = &handler.response.path;
 
-            if file_path.to_owned() == PathBuf::new() {
-                continue
+            if *file_path == PathBuf::new() {
+                continue;
             }
 
             let abs_file_path = fs::canonicalize(file_path)?;
@@ -62,9 +62,9 @@ pub fn hot_reload_files() -> anyhow::Result<()> {
         match rx.recv() {
             Ok(event) => {
                 match event {
-                    DebouncedEvent::Write(file_path) |
-                    DebouncedEvent::Create(file_path) |
-                    DebouncedEvent::Remove(file_path) => {
+                    DebouncedEvent::Write(file_path)
+                    | DebouncedEvent::Create(file_path)
+                    | DebouncedEvent::Remove(file_path) => {
                         if file_path == abs_config_path {
                             // read the configuration file
                             let config = BinserveConfig::read()?;
@@ -73,30 +73,27 @@ pub fn hot_reload_files() -> anyhow::Result<()> {
                             let handlebars_handle = templates::render_templates(&config)?;
 
                             // prepare routes table
-                            RouteHandle::add_routes(&config.routes, &handlebars_handle)?;                            
+                            RouteHandle::add_routes(&config.routes, &handlebars_handle)?;
                         }
 
-                        match file_mapping.get(&file_path) {
-                            Some(route_key) => {
-                                // read the configuration file
-                                let config = BinserveConfig::read()?;
+                        if let Some(route_key) = file_mapping.get(&file_path) {
+                            // read the configuration file
+                            let config = BinserveConfig::read()?;
 
-                                // prepare template partials
-                                let handlebars_handle = templates::render_templates(&config)?;
+                            // prepare template partials
+                            let handlebars_handle = templates::render_templates(&config)?;
 
-                                // reload the file state and update the global program state
-                                RouteHandle::associate_files_to_routes(
-                                    &route_key.to_string(),
-                                    &file_path,
-                                    &handlebars_handle
-                                )?;
-                            },
-                            None => ()
+                            // reload the file state and update the global program state
+                            RouteHandle::associate_files_to_routes(
+                                &route_key.to_string(),
+                                &file_path,
+                                &handlebars_handle,
+                            )?;
                         }
                     }
-                    _ => ()
+                    _ => (),
                 }
-            },
+            }
             Err(e) => {
                 println!("[!] filesystem watch error (binserve hot reload): {:?}", e)
             }

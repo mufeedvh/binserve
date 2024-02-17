@@ -1,12 +1,10 @@
-use clap::{Command, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, Command};
 
 use crate::core::VERSION;
 
 /// Prints an ASCII art banner to look cool!
 pub fn banner() {
-    eprintln!(
-        "{}", format!("{} {}\n", include_str!("banner"), VERSION)
-    )
+    eprintln!("{} {}\n", include_str!("banner"), VERSION)
 }
 
 /// Command-line arguments
@@ -33,13 +31,13 @@ pub fn args() -> ArgMatches {
             .value_name("TLS KEY")
             .help("TLS key file.")
             .required(false)
-            .takes_value(true))            
+            .takes_value(true))
         .arg(Arg::new("tls_cert")
             .short('c')
             .long("cert")
             .value_name("TLS CERT")
             .help("TLS cert file.")
             .required(false)
-            .takes_value(true))           
+            .takes_value(true))
         .get_matches()
 }
