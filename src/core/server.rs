@@ -275,7 +275,7 @@ pub async fn run_server(config_state: BinserveConfig) -> std::io::Result<()> {
         let tls_config = tls::load_rustls_config().unwrap();
 
         // bind the TLS host and the rustls configuration
-        http_server = http_server.bind_rustls(tls_host, tls_config)?;
+        http_server = http_server.bind_rustls_0_22(tls_host, tls_config)?;
     }
 
     http_server.run().await

@@ -18,13 +18,13 @@ pub fn init() -> anyhow::Result<()> {
 
     // override with cli configurations if any
     let cli_args = interface::args();
-    if let Some(host) = cli_args.value_of("host") {
+    if let Some(host) = cli_args.get_one::<String>("host") {
         config.server.host = host.into();
     }
-    if let Some(tls_key) = cli_args.value_of("tls_key") {
+    if let Some(tls_key) = cli_args.get_one::<String>("tls_key") {
         config.server.tls.key = tls_key.into();
     }
-    if let Some(tls_cert) = cli_args.value_of("tls_cert") {
+    if let Some(tls_cert) = cli_args.get_one::<String>("tls_cert") {
         config.server.tls.key = tls_cert.into();
     }
 

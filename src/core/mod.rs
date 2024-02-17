@@ -7,4 +7,4 @@ pub(super) mod templates;
 pub(super) mod tls;
 pub(super) mod watcher;
 
-pub static VERSION: &str = "0.2.0";
+pub static VERSION: &str = "0.2.1";
