@@ -1,16 +1,14 @@
 use clap::{Arg, ArgMatches, Command};
 
-use crate::core::VERSION;
-
 /// Prints an ASCII art banner to look cool!
 pub fn banner() {
-    eprintln!("{} {}\n", include_str!("banner"), VERSION)
+    eprintln!("{} {}\n", include_str!("banner"), env!("CARGO_PKG_VERSION"))
 }
 
 /// Command-line arguments
 pub fn args() -> ArgMatches {
     Command::new("binserve")
-        .version(VERSION)
+        .version(env!("CARGO_PKG_VERSION"))
         .author("Mufeed VH <mufeed@lyminal.space>")
         .about("A fast static web server with Automatic HTTPs, routing, templating, and security in a single binary you can setup with zero code.")
         .arg(Arg::new("command")

@@ -18,7 +18,7 @@ use std::path::{Path, PathBuf};
 use super::{
     config::{BinserveConfig, CONFIG_STATE},
     routes::{Type, ROUTEMAP},
-    tls, VERSION,
+    tls,
 };
 
 use crate::cli::messages::{push_message, Type as MsgType};
@@ -158,8 +158,8 @@ pub async fn run_server(config_state: BinserveConfig) -> std::io::Result<()> {
                 let mut headers_middleware = middleware::DefaultHeaders::new();
 
                 // binserve server header
-                headers_middleware =
-                    headers_middleware.add((SERVER, format!("binserve/{}", VERSION)));
+                headers_middleware = headers_middleware
+                    .add((SERVER, format!("binserve/{}", env!("CARGO_PKG_VERSION"))));
 
                 // Add the `Cache-Control` header if enabled in config.
                 //
