@@ -1,20 +1,19 @@
 use std::collections::HashMap;
-use std::path::{Path, PathBuf};
 use std::fs::File;
 use std::io::BufReader;
 use std::io::{self, prelude::*};
+use std::path::{Path, PathBuf};
 
-use serde::{Serialize, Deserialize};
-use serde_json;
+use serde::{Deserialize, Serialize};
 
-pub const CONFIG_FILE: &'static str = "binserve.json";
+pub const CONFIG_FILE: &str = "binserve.json";
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
 pub struct Tls {
     pub host: String,
 
     pub enable: bool,
-    
+
     #[serde(default)]
     pub key: PathBuf,
 
@@ -27,7 +26,7 @@ pub struct Server {
     pub host: String,
 
     #[serde(default)]
-    pub tls: Tls
+    pub tls: Tls,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -39,7 +38,7 @@ pub struct Static {
     pub served_from: String,
 
     #[serde(default)]
-    pub error_pages: HashMap<i16, PathBuf>
+    pub error_pages: HashMap<i16, PathBuf>,
 }
 
 #[derive(Default, Debug, Clone, Serialize, Deserialize)]
@@ -48,12 +47,16 @@ pub struct Template {
     pub partials: HashMap<String, PathBuf>,
 
     #[serde(default)]
-    pub variables: HashMap<String, String>
+    pub variables: HashMap<String, String>,
 }
 
 // configuration toggles
-const fn enabled() -> bool { true }
-const fn disabled() -> bool { false }
+const fn enabled() -> bool {
+    true
+}
+const fn disabled() -> bool {
+    false
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Config {
@@ -76,7 +79,7 @@ pub struct Config {
     pub follow_symlinks: bool,
 
     #[serde(default = "disabled")]
-    pub enable_logging: bool
+    pub enable_logging: bool,
 }
 
 /// secure/fallback defaults
@@ -89,7 +92,7 @@ impl Default for Config {
             enable_directory_listing: false,
             minify_html: false,
             follow_symlinks: false,
-            enable_logging: false
+            enable_logging: false,
         }
     }
 }
@@ -109,16 +112,15 @@ pub struct BinserveConfig {
     pub config: Config,
 
     #[serde(default)]
-    pub insert_headers: HashMap<String, String>
+    pub insert_headers: HashMap<String, String>,
 }
 
 use once_cell::sync::Lazy;
 use parking_lot::Mutex;
 
 /// A universal config state
-pub static CONFIG_STATE: Lazy<Mutex<BinserveConfig>> = Lazy::new(|| {
-    Mutex::new(BinserveConfig::default())
-});
+pub static CONFIG_STATE: Lazy<Mutex<BinserveConfig>> =
+    Lazy::new(|| Mutex::new(BinserveConfig::default()));
 
 impl BinserveConfig {
     /// Read and serialize the config file.
@@ -126,7 +128,7 @@ impl BinserveConfig {
         let config_file = File::open(CONFIG_FILE)?;
         let buf_reader = BufReader::new(config_file);
         let config: BinserveConfig = serde_json::from_reader(buf_reader)?;
-        
+
         // update global config state
         *CONFIG_STATE.lock() = config.to_owned();
 

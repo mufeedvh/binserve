@@ -1,30 +1,30 @@
-use once_cell::sync::Lazy;
 use dashmap::DashMap;
+use once_cell::sync::Lazy;
 
 /// routes are usually small in size, store them in the stack
 use compact_str::CompactString;
 
-use std::path::PathBuf;
 use std::collections::HashMap;
+use std::path::PathBuf;
 
 // multi-threaded directory walking
-use jwalk::{WalkDir};
+use jwalk::WalkDir;
 
 /// Route type indicating whether the file is read from memory or disk
 #[derive(Debug, PartialEq)]
 pub enum Type {
     Bytes,
-    File
+    File,
 }
 
 /// Represents a static file, both in-memory and from disk
-use super::files::{StaticFile, generate_not_found};
+use super::files::{generate_not_found, StaticFile};
 
 /// Struct to contain and handle the Response type for the route.
 #[derive(Debug)]
 pub struct RouteHandle {
     pub r#type: Type,
-    pub response: StaticFile
+    pub response: StaticFile,
 }
 
 /// Use ahash as the hasher for the concurrent hashmap
@@ -32,17 +32,16 @@ use ahash::RandomState;
 
 /// A concurrent HashMap containing all the routes and the bytes to it's corresponding files.
 /// Files are read at initialization so as to prevent I/O operations at runtime (only when `fast_mem_cache` is enabled)
-pub static ROUTEMAP: Lazy<DashMap<CompactString, RouteHandle, RandomState>> = Lazy::new(|| {
-    DashMap::with_hasher(RandomState::new())
-});
+pub static ROUTEMAP: Lazy<DashMap<CompactString, RouteHandle, RandomState>> =
+    Lazy::new(|| DashMap::with_hasher(RandomState::new()));
 
 /// Manages routes and it's corresponding responses
 impl RouteHandle {
     /// Add routes to the concurrent hashmap containing the routes.
     pub fn add_routes(
         route_set: &HashMap<String, PathBuf>,
-        handlebars_handle: &(handlebars::Handlebars, handlebars::Context)
-    ) -> anyhow::Result<()>  {
+        handlebars_handle: &(handlebars::Handlebars, handlebars::Context),
+    ) -> anyhow::Result<()> {
         for (route, path) in route_set {
             if path.is_dir() {
                 // create a route entry for each file where the file path
@@ -60,11 +59,13 @@ impl RouteHandle {
                     // a file under the `posts` directory for example
                     // `/public/posts/how-to-comfort-the-borrow-checker/read.html`
                     // will be resolved to the route and accessible by
-                    // `https://www.rustevangelismstrikeforce.com/how-to-comfort-the-borrow-checker/read.html`.   
+                    // `https://www.rustevangelismstrikeforce.com/how-to-comfort-the-borrow-checker/read.html`.
                     let entry = entry?;
 
                     if entry.file_type().is_file() {
-                        let mut route_index: String = entry.path().to_string_lossy()
+                        let mut route_index: String = entry
+                            .path()
+                            .to_string_lossy()
                             .replace(&starting_directory, "");
 
                         // combine route definition and file path under the specified directory
@@ -82,16 +83,12 @@ impl RouteHandle {
                         Self::associate_files_to_routes(
                             &route_index,
                             &entry.path(),
-                            &handlebars_handle
+                            handlebars_handle,
                         )?
                     }
                 }
             } else {
-                Self::associate_files_to_routes(
-                    route,
-                    path,
-                    &handlebars_handle
-                )?
+                Self::associate_files_to_routes(route, path, handlebars_handle)?
             }
         }
 
@@ -107,13 +104,10 @@ impl RouteHandle {
 
         let route_handle = RouteHandle {
             r#type: Type::Bytes,
-            response: not_found_page
+            response: not_found_page,
         };
 
-        ROUTEMAP.insert(
-            "{{404}}".into(),
-            route_handle
-        );
+        ROUTEMAP.insert("{{404}}".into(), route_handle);
 
         Ok(())
     }
@@ -122,24 +116,23 @@ impl RouteHandle {
     pub fn associate_files_to_routes(
         route: &String,
         path: &PathBuf,
-        handlebars_handle: &(handlebars::Handlebars, handlebars::Context)        
+        handlebars_handle: &(handlebars::Handlebars, handlebars::Context),
     ) -> anyhow::Result<()> {
         // create a static file instance containing it's mime type, contents, and metadata
-        let static_file = StaticFile::create(&path, &handlebars_handle)?;
+        let static_file = StaticFile::create(path, handlebars_handle)?;
 
-        let route_handle: RouteHandle;
-
-        if static_file.bytes.is_empty() { // this means the file is not in-memory
-            route_handle = RouteHandle {
+        let route_handle = if static_file.bytes.is_empty() {
+            // this means the file is not in-memory
+            RouteHandle {
                 r#type: Type::File,
-                response: static_file
+                response: static_file,
             }
         } else {
-            route_handle = RouteHandle {
+            RouteHandle {
                 r#type: Type::Bytes,
-                response: static_file
+                response: static_file,
             }
-        }
+        };
 
         // pop the initial trailing slash if it exists
         let mut route_fmt = route.chars();
@@ -153,10 +146,7 @@ impl RouteHandle {
 
         route_str = format!("/{}", route_str);
 
-        ROUTEMAP.insert(
-            route_str.into(),
-            route_handle
-        );
+        ROUTEMAP.insert(route_str.into(), route_handle);
 
         Ok(())
     }

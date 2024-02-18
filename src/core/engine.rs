@@ -1,12 +1,8 @@
 use crate::cli::interface;
 
-use super::{
-    files, server, templates, watcher,
-    routes::RouteHandle,
-    config::BinserveConfig,
-};
+use super::{config::BinserveConfig, files, routes::RouteHandle, server, templates, watcher};
 
-use crate::cli::messages::{Type, push_message};
+use crate::cli::messages::{push_message, Type};
 
 pub fn init() -> anyhow::Result<()> {
     let start_time = std::time::Instant::now();
@@ -22,9 +18,15 @@ pub fn init() -> anyhow::Result<()> {
 
     // override with cli configurations if any
     let cli_args = interface::args();
-    cli_args.value_of("host").map(|host| config.server.host = host.into());
-    cli_args.value_of("tls_key").map(|tls_key| config.server.tls.key = tls_key.into());
-    cli_args.value_of("tls_cert").map(|tls_cert| config.server.tls.key = tls_cert.into());
+    if let Some(host) = cli_args.get_one::<String>("host") {
+        config.server.host = host.into();
+    }
+    if let Some(tls_key) = cli_args.get_one::<String>("tls_key") {
+        config.server.tls.key = tls_key.into();
+    }
+    if let Some(tls_cert) = cli_args.get_one::<String>("tls_cert") {
+        config.server.tls.key = tls_cert.into();
+    }
 
     // prepare template partials
     let handlebars_handle = templates::render_templates(&config)?;
@@ -37,33 +39,25 @@ pub fn init() -> anyhow::Result<()> {
     if end_time.as_millis() == 0 {
         push_message(
             Type::Info,
-            &format!("Build finished in {} μs ⚡", end_time.as_micros())
+            &format!("Build finished in {} μs ⚡", end_time.as_micros()),
         )
     } else {
         push_message(
             Type::Info,
-            &format!("Build finished in {} ms ⚡", end_time.as_millis())
+            &format!("Build finished in {} ms ⚡", end_time.as_millis()),
         )
     }
 
     if config.server.tls.enable {
-        push_message(
-            Type::Info,
-            "Enabled TLS (HTTPS) 🔒"
-        )
+        push_message(Type::Info, "Enabled TLS (HTTPS) 🔒")
     }
 
     if config.config.enable_logging {
-        push_message(
-            Type::Info,
-            "Enabled logging 📜"
-        )
+        push_message(Type::Info, "Enabled logging 📜")
     }
 
     // start the hot reloader (file wacther)
-    std::thread::spawn(|| {
-        watcher::hot_reload_files()
-    });
+    std::thread::spawn(watcher::hot_reload_files);
 
     // and finally server take off!
     server::run_server(config)?;
